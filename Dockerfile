@@ -1,4 +1,4 @@
-FROM golang:1.23.0-bullseye as deploy-builder
+FROM golang:1.23.0-bookworm as deploy-builder
 
 WORKDIR /app
 
@@ -8,11 +8,9 @@ RUN go mod download
 COPY . .
 RUN go build -trimpath -ldflags "-w -s" -o app
 
-FROM debian:bullseye-slim as deploy
+FROM debian:bookworm-slim as deploy
 
-RUN apt-get update
-
-COPY --from=deply-builder /app/app .
+COPY --from=deploy-builder /app/app .
 
 CMD [ "./app" ]
 
